@@ -1,0 +1,4 @@
+@table pipoint
+@ostr tag
+@sele pointsource=%1
+@ends

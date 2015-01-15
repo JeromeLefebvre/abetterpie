@@ -1,0 +1,6 @@
+@table piarc
+@ostr tag, value, time
+@ostr ...
+@istr tag, starttime,endtime, count
+%i,*,*-10m, 10
+@ends

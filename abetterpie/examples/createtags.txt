@@ -1,0 +1,5 @@
+@table pipoint
+@mode create
+@istr Tag, pointsource
+%i, OPC
+@ends
