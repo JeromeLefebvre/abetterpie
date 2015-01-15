@@ -13,7 +13,7 @@ abetterpieの一つの目的はpiconfigの交換になります。つまり、�
 	
 と記入してからされた質問に「Y」を答えるとPowershellのスクリプトを起動できるようになります。
 
-	その上に、piconfigのフラグを、「node」など、abetterpieに追加にしても、まだ使えません。piconfigのフラグを使いたいなら、abetterpieのPiconfing-Pathという関数を変えなけらななりません。
+その上に、piconfigのフラグを、「node」など、abetterpieに追加にしても、まだ使えません。piconfigのフラグを使いたいなら、abetterpieのPiconfing-Pathという関数を変えなけらななりません。
 
 ## 変数のタイプ１
 abetterpieの変数二つのタイプがあります。タイプ１は、%1、%2、%3などで書かれています。abetterpieのスクリプトを起動するときに、%1はCLIで最初に書かれた引数に変わります。%2、%3などに同じふうに変更されます。
