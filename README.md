@@ -26,7 +26,7 @@ abetterpieの変数二つのタイプがあります。タイプ１は、%1、%2
 	@ends
 というabetterpieのスクリプトを
 
-	.¥abetterpie select.txt opc
+	.\abetterpie select.txt opc
 
 で起動したら、下記のPIconfigと同じように起動します。
 
@@ -47,7 +47,8 @@ abetterpieの変数二つのタイプがあります。タイプ１は、%1、%2
 	@ends
 
 PowershellのCLIで
-	.¥abetterpie cdt1 cdt2 cdt3 cdt4
+
+	.\abetterpie cdt1 cdt2 cdt3 cdt4
 
 で起動したら、
 
