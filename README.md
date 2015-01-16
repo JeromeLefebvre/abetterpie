@@ -64,3 +64,40 @@ PowershellのCLIで
 と同じのpiconfigのスクリプトを実行します。
 
 今では、変数タイプ１と変数タイプ２を混ぜれません。それとも、abetterpieのスクリプトの中にタイプ２は一回だけ使えます。
+
+## 例、fastsinusoidのタグの作り方。
+
+とりあえず、タグを作ります。
+
+	@table pipoint
+	@mode create
+	@istr Tag, pointtype
+	%i, float32
+	@ends
+
+そして、実行します。
+
+	.\abetterpie .\examples\createtags.txt fastsinusoid
+
+今、このタグに値を記入できるスクリプトを作成します。
+
+	@table pisnap
+	@mode edit, t
+	@istr tag, time, value
+	%1, *, %2
+	@ends
+
+下記を実行できます。
+
+		.\abetterpie .\examples\adddata.txt fastsinusoid 100
+
+sinusoidのみたいのデータを欲しいから、PowerShellの数学の引数を使えます。
+
+	$counter = 0
+	while ($counter -ge 0) {
+		$counter = $counter + 1
+		$val = [System.Math]::Sin($counter/10)
+		.\abetterpie ".\examples\adddata.txt" fastsinusoid $val
+	}
+
+確かに、Bufferingなどされていないし、インタフェースとして最悪ですが、早く書けるし、すぐ結果を出せるから、たまに便利です。
