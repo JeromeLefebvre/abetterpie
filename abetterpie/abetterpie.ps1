@@ -5,7 +5,7 @@
 function Piconfing-Path {
 	# Try to find where piconfig is
 	# either in %piserver%
-	if (Test-Path Env:piserver ) {
+	if (Test-Path Env:piserver) {
 		# Have to do a bit of a weird escaping here
 		$piconfigpath = "`"$Env:piserver\adm\piconfig`""
 	}
@@ -15,7 +15,7 @@ function Piconfing-Path {
 	}
 	# This is where you add any flags to piconfig you need to have
 	# For example, here a node is specified and -Trust is the mode to log-in
-	# $piconfigpath = $piconfigpath + " -Node Jerome-PI1 -Trust"
+	$piconfigpath = $piconfigpath + " -Node Jerome-PI1 -Trust"
 
 	return $piconfigpath
 }
@@ -32,8 +32,8 @@ function Run-Script($program) {
 	Set-Content $tempfile $program
 	$piconfigpath = Piconfing-Path
 	cmd /c   "$piconfigpath < $tempfile"
-	# Write-Host $tempfile
-	Remove-Item $tempfile
+	Write-Host $tempfile
+	# Remove-Item $tempfile
 }
 
 ## Get the betterpie arguments

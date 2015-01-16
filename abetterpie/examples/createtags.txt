@@ -1,5 +1,5 @@
 @table pipoint
 @mode create
-@istr Tag, pointsource
-%i, OPC
+@istr Tag, pointtype
+%i, float32
 @ends
