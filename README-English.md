@@ -17,30 +17,31 @@ More details can be read at: [Windows PowerShell の機能](http://technet.micro
 For now, you cannot pass piconfig flags, for example -Trust or -Node, to abetterpie. Do pass on theses flags, you will need to modify the function Piconfig-Path in the abetterscript file.
 
 
-## 変数のタイプ１
-abetterpieの変数二つのタイプがあります。タイプ１は、%1、%2、%3などで書かれています。abetterpieのスクリプトを実行すると、%1はCLIで最初に書かれた引数に変わります。%2、%3などに同じふうに変更されます。
+## Variables of type 1
+abetterpie has two types of variables. The first time, is written of the form %1, %2, %3, etc. At execution time, theses variables are expanded along with the arguments given at the command line.
 
-例えば
+For example if the following abetterpie script:
 
 	@table pipoint
 	@ostr tag
 	@sele pointsource=%1
 	@ends
-というabetterpieのスクリプトを
+
+is ran using the command:
 
 	.\abetterpie select.txt opc
 
-で実行したら、下記のPIconfigと同じように起動します。
+it will run as the following piconfig script:
 
 	@table pipoint
 	@ostr tag
 	@sele pointsource=OPC
 	@ends
 
-## 変数のタイプ２
-タイプ２は%iで書かれます。%iの意味は引数の全てを同じふうに拡大します。実行すると%iにある行は、引数の一つずつ同じ行に拡大します。
+## Variable type 2
+The second type of variable is written as %i. %i stands for all variables and the way it is expanded is that it will repeat the line where %i, with %i replaced by all the given arguments.
 
-例えば
+For example, if the following script:
 
 	@table pipoint
 	@mode create
@@ -48,11 +49,11 @@ abetterpieの変数二つのタイプがあります。タイプ１は、%1、%2
 	%i, OPC
 	@ends
 
-PowershellのCLIで
+is ran as:
 
 	.\abetterpie cdt1 cdt2 cdt3 cdt4
 
-で実行したら、
+it will execute as the following piconfig script:
 
 	@table pipoint
 	@mode create
@@ -63,13 +64,12 @@ PowershellのCLIで
 	cdt4, OPC
 	@ends
 
-と同じのpiconfigのスクリプトを実行します。
+For now, type 1 and type 2 cannot be mixed in the same script.
 
-今では、変数タイプ１と変数タイプ２を混ぜれません。それとも、abetterpieのスクリプトの中にタイプ２は一回だけ使えます。
 
-## 例、fastsinusoidのタグの作り方。
+## Example, let's create a fastsinusoid tag.
 
-とりあえず、タグを作ります。
+Let's first create our tag:
 
 	@table pipoint
 	@mode create
@@ -77,11 +77,11 @@ PowershellのCLIで
 	%i, float32
 	@ends
 
-そして、実行します。
+which we run as:
 
 	.\abetterpie .\examples\createtags.txt fastsinusoid
 
-今、このタグに値を記入できるスクリプトを作成します。
+Then, we need a script that can add values to the Data Archive:
 
 	@table pisnap
 	@mode edit, t
@@ -89,11 +89,11 @@ PowershellのCLIで
 	%1, *, %2
 	@ends
 
-下記の通りに実行できます。
+Which we can run as follows:
 
 		.\abetterpie .\examples\adddata.txt fastsinusoid 100
 
-sinusoidのみたいのデータを欲しいから、PowerShellの数学の引数を使えます。
+Since, we are recreating a sinusoid like tag, we can PowerShell's math library's functionality as follows:
 
 	$counter = 0
 	while ($counter -ge 0) {
@@ -102,4 +102,4 @@ sinusoidのみたいのデータを欲しいから、PowerShellの数学の引�
 		.\abetterpie .\examples\adddata.txt fastsinusoid $val
 	}
 
-確かに、Bufferingなどされていないし、インタフェースとして最悪ですが、早く書けるし、すぐ結果を出せるから、便利なスクリプトだと思います。
+In a sense, this is the world's worst interface. But, how quickly it can be written, gives it some usefulness.
