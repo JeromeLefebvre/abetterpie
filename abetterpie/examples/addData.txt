@@ -1,0 +1,5 @@
+@table pisnap
+@mode edit, t
+@istr tag, time, value
+%1, *, %2
+@ends
