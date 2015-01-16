@@ -93,11 +93,12 @@ PowershellのCLIで
 
 sinusoidのみたいのデータを欲しいから、PowerShellの数学の引数を使えます。
 
+```PowerShell
 	$counter = 0
 	while ($counter -ge 0) {
 		$counter = $counter + 1
 		$val = [System.Math]::Sin($counter/10)
 		.\abetterpie .\examples\adddata.txt fastsinusoid $val
 	}
-
+```
 確かに、Bufferingなどされていないし、インタフェースとして最悪ですが、早く書けるし、すぐ結果を出せるから、便利なスクリプトだと思います。
