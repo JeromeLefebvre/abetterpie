@@ -2,7 +2,7 @@
 # abtterpie.ps1
 # A powershell wrapper around piconfig, which allows the use of variables
 #
-function Piconfing-Path {
+function Piconfig-Path {
 	# Try to find where piconfig is
 	# either in %piserver%
 	if (Test-Path Env:piserver) {
@@ -27,10 +27,10 @@ function Run-Script($program) {
 	# The output of piconfig is not captured
 
 	# A library call to get a temporary file
-	$tempfile = [System.IO.Path]::GetTempFileName()	
-	
+	$tempfile = [System.IO.Path]::GetTempFileName()
+
 	Set-Content $tempfile $program
-	$piconfigpath = Piconfing-Path
+	$piconfigpath = Piconfig-Path
 	cmd /c   "$piconfigpath < $tempfile"
 	Write-Host $tempfile
 	# Remove-Item $tempfile
@@ -43,13 +43,13 @@ $file = $args[0]
 # then all the arguments for that script
 $vars = $args[1 .. ($args.count -1)]
 
-## We now build out piconfig script 
+## We now build out piconfig script
 # starting from our template
 $program = Get-Content $file
 
 if ($program -match "%i") {
 	# replace the single line which has an %i
-	$line = $program | Where-Object {$_ -match "%i"} 
+	$line = $program | Where-Object {$_ -match "%i"}
 
 	$newlines =  $vars | % {
 		$line.replace("%i", $_)

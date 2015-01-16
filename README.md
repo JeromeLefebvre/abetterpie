@@ -13,7 +13,7 @@ abetterpieの一つの目的はpiconfigの交換になります。つまり、�
 	
 を実行するとのUnrestrictedの実行ポリシーが設定されます。詳しくは[Windows PowerShell の機能](http://technet.microsoft.com/ja-jp/library/ee176961.aspx)にご覧ください。
 
-その上に、piconfigのパラメータを、「node」など、abetterpieでまだ使えません。piconfigのパラメータを使いたいなら、abetterpieのPiconfing-Pathという関数を変更しなければなりません。
+その上に、piconfigのパラメータを、「node」など、abetterpieでまだ使えません。piconfigのパラメータを使いたいなら、abetterpieのPiconfig-Pathという関数を変更しなければなりません。
 
 ## 変数のタイプ１
 abetterpieの変数二つのタイプがあります。タイプ１は、%1、%2、%3などで書かれています。abetterpieのスクリプトを実行すると、%1はCLIで最初に書かれた引数に変わります。%2、%3などに同じふうに変更されます。
@@ -87,7 +87,7 @@ PowershellのCLIで
 	%1, *, %2
 	@ends
 
-下記を実行できます。
+下記の通りに実行できます。
 
 		.\abetterpie .\examples\adddata.txt fastsinusoid 100
 
@@ -97,7 +97,7 @@ sinusoidのみたいのデータを欲しいから、PowerShellの数学の引�
 	while ($counter -ge 0) {
 		$counter = $counter + 1
 		$val = [System.Math]::Sin($counter/10)
-		.\abetterpie ".\examples\adddata.txt" fastsinusoid $val
+		.\abetterpie .\examples\adddata.txt fastsinusoid $val
 	}
 
-確かに、Bufferingなどされていないし、インタフェースとして最悪ですが、早く書けるし、すぐ結果を出せるから、たまに便利です。
+確かに、Bufferingなどされていないし、インタフェースとして最悪ですが、早く書けるし、すぐ結果を出せるから、便利なスクリプトだと思います。
