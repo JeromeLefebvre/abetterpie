@@ -71,11 +71,11 @@
 *.css    text
 *.js     text
 *.sql    text
-*.ps1    text
-*.txt    text
 
 *.csproj text merge=union
 *.sln    text merge=union eol=crlf
+*.ps1    text merge=union eol=crlf
+*.txt    text merge=union eol=crlf
 
 *.docx   diff=astextplain
 *.DOCX   diff=astextplain
