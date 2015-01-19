@@ -9,7 +9,9 @@ PiconfigのラッパーのPowerShellスクリプトのabetterpieを紹介した�
 abetterpieの一つの目的はpiconfigの交換になります。つまり、今までのPiconfigのスクリプトをabetterpieでそのまま実行できます。
 	二つの注意があります。abetterpieはPowerShellのスクリプトなので、実行できるためにSet-ExecutionPolicyというコマンドレットでPowerShellのスクリプトのポリシーを指定しなければなりません。PowerShellのコマンドラインインターフェース（CLI）で
 
-	Set-ExecutionPolicy　Unrestricted
+```PowerShell
+Set-ExecutionPolicy　Unrestricted
+```
 	
 を実行するとのUnrestrictedの実行ポリシーが設定されます。詳しくは[Windows PowerShell の機能](http://technet.microsoft.com/ja-jp/library/ee176961.aspx)にご覧ください。
 
@@ -20,13 +22,17 @@ abetterpieの変数二つのタイプがあります。タイプ１は、%1、%2
 
 例えば
 
-	@table pipoint
-	@ostr tag
-	@sele pointsource=%1
-	@ends
+```
+@table pipoint
+@ostr tag
+@sele pointsource=%1
+@ends
+```
 というabetterpieのスクリプトを
 
-	.\abetterpie select.txt opc
+```PowerShell
+.\abetterpie select.txt opc
+```
 
 で実行したら、下記のPIconfigと同じように起動します。
 
@@ -48,8 +54,9 @@ abetterpieの変数二つのタイプがあります。タイプ１は、%1、%2
 
 PowershellのCLIで
 
-	.\abetterpie cdt1 cdt2 cdt3 cdt4
-
+```PowerShell
+.\abetterpie cdt1 cdt2 cdt3 cdt4
+```
 で実行したら、
 
 	@table pipoint
@@ -77,7 +84,9 @@ PowershellのCLIで
 
 そして、実行します。
 
-	.\abetterpie .\examples\createtags.txt fastsinusoid
+```PowerShell
+.\abetterpie .\examples\createtags.txt fastsinusoid
+```
 
 今、このタグに値を記入できるスクリプトを作成します。
 
@@ -89,15 +98,18 @@ PowershellのCLIで
 
 下記の通りに実行できます。
 
-		.\abetterpie .\examples\adddata.txt fastsinusoid 100
+```PowerShell
+.\abetterpie .\examples\adddata.txt fastsinusoid 100
+```
 
 sinusoidのみたいのデータを欲しいから、PowerShellの数学の引数を使えます。
 
-	$counter = 0
-	while ($counter -ge 0) {
-		$counter = $counter + 1
-		$val = [System.Math]::Sin($counter/10)
-		.\abetterpie .\examples\adddata.txt fastsinusoid $val
-	}
-
+```PowerShell
+$counter = 0
+while ($counter -ge 0) {
+	$counter = $counter + 1
+	$val = [System.Math]::Sin($counter/10)
+	.\abetterpie .\examples\adddata.txt fastsinusoid $val
+}
+```
 確かに、Bufferingなどされていないし、インタフェースとして最悪ですが、早く書けるし、すぐ結果を出せるから、便利なスクリプトだと思います。
