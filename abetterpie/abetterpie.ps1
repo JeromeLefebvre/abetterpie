@@ -2,25 +2,28 @@
 # abtterpie.ps1
 # A powershell wrapper around piconfig, which allows the use of variables
 #
-function Piconfig-Path {
+
+Param (
+	[string]$node = "localhost"
+)
+
+function Piconfig-Path($node="localhost") {
 	# Try to find where piconfig is
 	# either in %piserver%
 	if (Test-Path Env:piserver) {
 		# Have to do a bit of a weird escaping here
 		$piconfigpath = "`"$Env:piserver\adm\piconfig`""
 	}
-	# or %pihome%
+	# or in %pihome%, common if using piconfig remotely
 	else {
 		$piconfigpath = "`"$Env:pihome\adm\piconfig`""
 	}
-	# This is where you add any flags to piconfig you need to have
-	# For example, here a node is specified and -Trust is the mode to log-in
-	$piconfigpath = $piconfigpath + " -Node Jerome-PI1 -Trust"
-
+	# Usually, -Trust needs to be speficied as the way to connect to a piserver
+	$piconfigpath = "$piconfigpath -Node $node -Trust"
 	return $piconfigpath
 }
 
-function Run-Script($program) {
+function Run-Script($program, $node="localhost") {
 	# A function that calls a script stored in a string
 	# It does so by storing the string into a temp file
 	# which it later deletes
@@ -30,10 +33,10 @@ function Run-Script($program) {
 	$tempfile = [System.IO.Path]::GetTempFileName()
 
 	Set-Content $tempfile $program
-	$piconfigpath = Piconfig-Path
+	$piconfigpath = Piconfig-Path($node)
 	cmd /c   "$piconfigpath < $tempfile"
-	Write-Host $tempfile
-	# Remove-Item $tempfile
+	# Write-Host $tempfile
+	Remove-Item $tempfile
 }
 
 ## Get the betterpie arguments
@@ -66,4 +69,4 @@ else {
 	}
 }
 
-Run-Script($program)
+Run-Script($program) -node $node

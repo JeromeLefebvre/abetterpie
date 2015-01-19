@@ -8,7 +8,7 @@
     <RootNamespace>MyApplication</RootNamespace>
     <AssemblyName>MyApplication</AssemblyName>
     <Name>abetterpie</Name>
-    <DebugArguments>"C:\Users\Administrator\Documents\Visual Studio 2013\Projects\abetterpie\abetterpie\examples\adddata.txt" randomtag 200</DebugArguments>
+    <DebugArguments>"C:\Users\Administrator\Documents\Visual Studio 2013\Projects\abetterpie\abetterpie\examples\adddata.txt" -node Jerome-PI1 randomtag 500</DebugArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
