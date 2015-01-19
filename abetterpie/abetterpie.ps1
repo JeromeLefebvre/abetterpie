@@ -4,7 +4,7 @@
 #
 
 Param (
-	[string]$node = "localhost"
+	[string[]]$node = "localhost"
 )
 
 function Piconfig-Path($node="localhost") {
@@ -43,6 +43,7 @@ function Run-Script($program, $node="localhost") {
 # first the path of the abetterpie script
 $file = $args[0]
 
+Write-Host "The file is $file"
 # then all the arguments for that script
 $vars = $args[1 .. ($args.count -1)]
 
