@@ -1,6 +1,6 @@
 
 
-$tagname = "fastsinusoid2"
+$tagname = "fastsinusoid"
 .\abetterpie -Node localhost ".\examples\createTags.txt" $tagname
 
 $counter = 0
