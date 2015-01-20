@@ -1,14 +1,79 @@
-﻿#
-# abtterpie.ps1
-# A powershell wrapper around piconfig, which allows the use of variables
-#
+﻿# +-----------------------------------------------------------------------------------------------------
+# | File : abtterpie.ps1
+# | Description : A PowerShell wrapper around piconfig, which allows the use of variables
+# | Version : 0.1
+# | Author : Jerome Lefebvre (OSIsoft)
+# | Create Date : 2015-01-15
+# | 
+# +-----------------------------------------------------------------------------------------------------
+# |  DISCLAIMER: This sample code is provided to members of the 
+# |  PI Developers Club program (https://pisquare.osisoft.com/community/developers-club) 
+# |  and is subject to the vCampus End-User License Agreement, found at 
+# |  https://pisquare.osisoft.com/docs/DOC-1105.
+# |  
+# |  All sample code is provided by OSIsoft for illustrative purposes only.
+# |  These examples have not been thoroughly tested under all conditions.
+# |  OSIsoft provides no guarantee nor implies any reliability, 
+# |  serviceability, or function of these programs.
+# |  ALL PROGRAMS CONTAINED HEREIN ARE PROVIDED TO YOU "AS IS" 
+# |  WITHOUT ANY WARRANTIES OF ANY KIND. ALL WARRANTIES INCLUDING 
+# |  THE IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY
+# |  AND FITNESS FOR A PARTICULAR PURPOSE ARE EXPRESSLY DISCLAIMED.
+# |  
+# |  Please contact the PI Developers Club team at pidevclub@osisoft.com
+# |  for questions or concerns regarding this sample code.
+# +-----------------------------------------------------------------------------------------------------
 
-Param (
-	[string[]]$node = "localhost"
-)
+<#
+.SYNOPSIS
+	Perform a given piconfig script and also adds basic variable functionality to piconnfig.
+.DESCRIPTION
+	Perform a given piconfig script and also adds basic variable functionality to piconnfig.
+.PARAMETER PIConfigScript
+	The name of the PI-Server, Script containig piconfig commands.
+.PARAMETER PreserveInputFile
+	Switch to indicate to preserve the input file used to execute the script.
+.PARAMETER PreserveOutputFile
+	Switch to indicate to preserve the output file used to execute the script.
+
+.EXAMPLE	
+C:\PS>$PIScript = @'
+>>
+>>@syst echo.
+>>@syst echo Member Server Configuration ---------------------------------------------------
+>>@syst echo Name,IsCurrentServer,ServerID,Collective,Description,FQDN,SyncPeriod,Role
+>>@syst echo -------------------------------------------------------------------------------
+>>@table pisys,piserver
+>>@ostr name,iscurrentserver,serverid,collective,description,fqdn,syncperiod,role
+>>@sele name=*
+>>@ends
+>>
+>>'@
+
+C:\PS>.\InvokePIConfigScript.ps1 $PIScript -pof
+
+Description
+-----------
+This command executes a piconfig script and will keep the output returned by piconfig command. The
+file can be found on the user profile temporary folder.
+
+.EXAMPLE	
+C:\PS>$PIScript = Get-Content -Path "c:\myPath\script1.dif" | Out-String
+C:\PS>.\InvokePIConfigScript.ps1 $PIScript
+
+Description
+-----------
+This command executes a piconfig script contained in a file.
+#>
+
+function GetDefaultPIServer {
+	# A function that returns the default PIServer as listed in About-PI-SDK
+	return (Get-ItemProperty -Path Registry::HKEY_LOCAL_MACHINE\SOFTWARE\PISystem\PI-SDK\1.0).DefaultServer
+}
 
 #region - Define private functions
-
+# The following code comes from a script by Mathieu Hamel
+# As posted here: https://pisquare.osisoft.com/message/40482
 	function GetEnvVariable
 	{
 	[CmdletBinding(DefaultParameterSetName="Default", SupportsShouldProcess=$false)]
@@ -40,8 +105,6 @@ Param (
 				$scriptBlock = [ScriptBlock]::create( $scriptBlockCmd )
 				$value = Invoke-Command -ComputerName $Computer -ScriptBlock $scriptBlock
 			}
-
-			# Return the value found.
 			return $value
 		}
 		catch
@@ -99,14 +162,15 @@ Param (
 		{ Throw }
 	}
 
-function Piconfig-Path($node="localhost") {
+function Piconfig-Path {
 	$piconfigpath = ValidatePIConfigCLU
 	$piconfigpath = "`"$piconfigpath`""
+	$node = GetDefaultPIServer
 	$piconfigpath = "$piconfigpath -Node $node -Trust"
 	return $piconfigpath
 }
 
-function Run-Script($program, $node="localhost") {
+function Run-Script($program) {
 	# A function that calls a script stored in a string
 	# It does so by storing the string into a temp file
 	# which it later deletes
@@ -116,7 +180,7 @@ function Run-Script($program, $node="localhost") {
 	$tempfile = [System.IO.Path]::GetTempFileName()
 
 	Set-Content $tempfile $program
-	$piconfigpath = Piconfig-Path($node)
+	$piconfigpath = Piconfig-Path
 	Write-Host  "$piconfigpath < $tempfile"
 	cmd /c   "$piconfigpath < $tempfile"
 	# Write-Host $tempfile
@@ -153,4 +217,4 @@ else {
 	}
 }
 
-Run-Script($program) -node $node
+Run-Script($program)
