@@ -83,9 +83,10 @@ $args = @(0,1,2,3,4,5,6)
 $newargs = StringSlice -array $args -slice $slice
 write-Host $newargs #writes 2 3 4 5
 #>
-	$array = $array | % { $_ }
+	$array = $array | % { "`"$_`"" }
 	$new = $array -join ","
 	$new = "@($new)"
+	Write-Host "$new$slice"
 	$newargs = invoke-expression "$new$slice"
 	return $newargs
 }
@@ -202,8 +203,8 @@ function Run-Script($program) {
 	$piconfigpath = Piconfig-Path
 	Write-Host  "$piconfigpath < $tempfile"
 	cmd /c   "$piconfigpath < $tempfile"
-	# Write-Host $tempfile
-	Remove-Item $tempfile
+	Write-Host $tempfile
+	# Remove-Item $tempfile
 }
 
 ## Get the betterpie arguments
@@ -217,23 +218,48 @@ $vars = $args[1 .. ($args.count -1)]
 # starting from our template
 $program = Get-Content $file
 
+function getBracketContent ($line) {
+
+	$r = [regex] "\[([^\[]*)\]"
+	$match = $r.match($line)
+	$text = $match.groups[1].value	
+	$text = "[$text]"
+	return $text
+}
+
 if ($program -match "%i") {
 	# replace the single line which has an %i
 	$line = $program | Where-Object {$_ -match "%i"}
 
-	$newlines =  $vars | % {
-		$line.replace("%i", $_)
+Write-Host "line: $line"
+
+## To-DO check if brakcets are actually in the line
+	$Bracket = getBracketContent($line)
+
+	Write-Host $Bracket
+	Write-Host "Vars: $vars" 
+	$newvars = StringSlice -array $vars -slice $Bracket
+
+Write-Host "Newvars; $newvars"
+	# Delete the brackets
+	$lineWOBracket = $line -replace "\[([^\[]*)\]"
+	Write-Host "line, without braket $lineWOBracket"
+
+	$newlines =  $newvars | % {
+		$lineWOBracket.replace("%i", $_)
 	}
+
+Write-Host "New lines: $newlines"
 	$new = $newlines -join "`r`n"
+	Write-Host "New lines in the program, $new"
 	$program = $program.replace($line, $new)
 }
-else {
+
 	# and adding in each variables given
-	$counter = 1
+	$counter = 0
 	$vars | % {
 		$program = $program -replace  "%$counter", $_
 		$counter = $counter + 1
 	}
-}
 
 Run-Script($program)
