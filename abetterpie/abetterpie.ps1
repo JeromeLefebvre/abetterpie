@@ -71,6 +71,25 @@ function GetDefaultPIServer {
 	return (Get-ItemProperty -Path Registry::HKEY_LOCAL_MACHINE\SOFTWARE\PISystem\PI-SDK\1.0).DefaultServer
 }
 
+function StringSlice($array, $slice) {
+<#
+Takes an array and a string that represents a slice
+and returns the array after this slice has been applied.
+
+For example:
+$slice = "[2..5]"
+$args = @(0,1,2,3,4,5,6)
+
+$newargs = StringSlice -array $args -slice $slice
+write-Host $newargs #writes 2 3 4 5
+#>
+	$array = $array | % { $_ }
+	$new = $array -join ","
+	$new = "@($new)"
+	$newargs = invoke-expression "$new$slice"
+	return $newargs
+}
+
 #region - Define private functions
 # The following code comes from a script by Mathieu Hamel
 # As posted here: https://pisquare.osisoft.com/message/40482
