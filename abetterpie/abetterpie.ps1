@@ -7,18 +7,101 @@ Param (
 	[string[]]$node = "localhost"
 )
 
+#region - Define private functions
+
+	function GetEnvVariable
+	{
+	[CmdletBinding(DefaultParameterSetName="Default", SupportsShouldProcess=$false)]
+	param(
+			[parameter(Mandatory=$true, Position=0, ParameterSetName = "Default")]
+			[alias("vn")]
+			[string]
+			$VariableName,
+			[parameter(Mandatory=$false, Position=1, ParameterSetName = "Default")]
+			[alias("t")]
+			[ValidateSet("Machine", "User", "Process")]
+			[string]
+			$Target = "Machine",
+			[parameter(Mandatory=$false, ParameterSetName = "Default")]
+			[string]
+			$Computer = "")	
+	
+		try
+		{
+			if($Computer -eq "")
+			{
+				# Execute the GetEnvironmentVariable method locally or remotely via the Invoke-Command cmdlet.
+				# Always use the Machine context to write the variable.
+				$value = [Environment]::GetEnvironmentVariable($VariableName, $Target)
+			}
+			else
+			{
+				$scriptBlockCmd = [string]::Format("[Environment]::GetEnvironmentVariable(`"{0}`", `"{1}`")", $VariableName, $Target)
+				$scriptBlock = [ScriptBlock]::create( $scriptBlockCmd )
+				$value = Invoke-Command -ComputerName $Computer -ScriptBlock $scriptBlock
+			}
+
+			# Return the value found.
+			return $value
+		}
+		catch
+		{
+			# Return the error message.
+			$msg1 = "A problem occurred during the reading of the environment variable: {0} from local machine." -f $_.Exception.Message
+			$msg2 = "A problem occurred during the reading of the environment variable: {0} from {1} machine." -f $_.Exception.Message,$Computer
+			if($Computer -eq "") { $msg = $msg1 } else { $msg = $msg2 }
+			Throw [System.Exception] $msg
+		}
+	}	
+
+	function ValidatePIConfigCLU
+	{	
+		try
+		{
+			# Set flags.
+			$cluFound = $false
+
+			# Get the PIHOME, PIHOME64 and PISERVER folders.
+			$PIHome64_path = GetEnvVariable "PIHOME64" "Machine"
+			$PIHome_path = GetEnvVariable "PIHOME" "Machine"
+			$PIServer_path = GetEnvVariable "PISERVER" "Machine"
+			$isPIServer = ($PIServer_path -ne $null)
+
+			# Build all the possible paths.
+
+			if(!([string]::IsNullOrEmpty($PIServer_path))) { $PIConfigExecSet1 = Join-Path -Path $PIServer_path -ChildPath "adm\piconfig.exe" }
+			if(!([string]::IsNullOrEmpty($PIHome64_path))) { $PIConfigExecSet2 = Join-Path -Path $PIHome64_path -ChildPath "adm\piconfig.exe" }
+			if(!([string]::IsNullOrEmpty($PIHome_path))) { $PIConfigExecSet3 = Join-Path -Path $PIHome_path -ChildPath "adm\piconfig.exe" }			
+
+			# Validate where the piconfig CLUs are installed.
+			# The piconfig.exe command is installed with PI SDK since version 1.4.0.416 on PINS
+
+			# Test for the PISERVER variable.
+			if($isPIServer -and ($cluFound -eq $false))
+			{ if(Test-Path $PIConfigExecSet1) { $cluFound = $true; $PIConfigExec = $PIConfigExecSet1 } }
+
+			# Test the 64-bit folder
+			if($cluFound -eq $false)
+			{ if(Test-Path $PIConfigExecSet2) { $cluFound = $true; $PIConfigExec = $PIConfigExecSet2 } }
+
+			# Test the 32-bit folder
+			if($cluFound -eq $false)
+			{ if(Test-Path $PIConfigExecSet3) { $cluFound = $true; $PIConfigExec = $PIConfigExecSet3 } }
+
+			# Throw error...
+			if($cluFound -eq $false)
+			{ $msg = "The module cannot find a piconfig.exe command-line utilities on this machine"; Throw [System.Exception] $msg }
+			
+			# Return the path.
+			return $PIConfigExec
+		}
+		catch
+		{ Throw }
+	}
+
 function Piconfig-Path($node="localhost") {
-	# Try to find where piconfig is
-	# either in %piserver%
-	if (Test-Path Env:piserver) {
-		# Have to do a bit of a weird escaping here
-		$piconfigpath = "`"$Env:piserver\adm\piconfig`""
-	}
-	# or in %pihome%, common if using piconfig remotely
-	else {
-		$piconfigpath = "`"$Env:pihome\adm\piconfig`""
-	}
-	# Usually, -Trust needs to be speficied as the way to connect to a piserver
+	$piconfigpath = ValidatePIConfigCLU
+	$piconfigpath = "`"$piconfigpath`""
 	$piconfigpath = "$piconfigpath -Node $node -Trust"
 	return $piconfigpath
 }
@@ -34,6 +117,7 @@ function Run-Script($program, $node="localhost") {
 
 	Set-Content $tempfile $program
 	$piconfigpath = Piconfig-Path($node)
+	Write-Host  "$piconfigpath < $tempfile"
 	cmd /c   "$piconfigpath < $tempfile"
 	# Write-Host $tempfile
 	Remove-Item $tempfile
@@ -43,7 +127,6 @@ function Run-Script($program, $node="localhost") {
 # first the path of the abetterpie script
 $file = $args[0]
 
-Write-Host "The file is $file"
 # then all the arguments for that script
 $vars = $args[1 .. ($args.count -1)]
 
