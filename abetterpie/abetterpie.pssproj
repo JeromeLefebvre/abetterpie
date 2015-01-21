@@ -8,7 +8,7 @@
     <RootNamespace>MyApplication</RootNamespace>
     <AssemblyName>MyApplication</AssemblyName>
     <Name>abetterpie</Name>
-    <DebugArguments>"C:\Users\Administrator\Documents\Visual Studio 2013\Projects\abetterpie\abetterpie\examples\createtagsWithPointSource.txt" string randomtag4 randomtag6</DebugArguments>
+    <DebugArguments>"C:\Users\Administrator\Documents\Visual Studio 2013\Projects\abetterpie\abetterpie\examples\createtagsWithPointSource.txt" string cdt100 cdt101 cdt102 cdt104</DebugArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

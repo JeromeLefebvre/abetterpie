@@ -4,6 +4,7 @@
 # | Version : 0.1
 # | Author : Jerome Lefebvre (OSIsoft)
 # | Create Date : 2015-01-15
+# | Modified Date: 2015-01-21
 # | 
 # +-----------------------------------------------------------------------------------------------------
 # |  DISCLAIMER: This sample code is provided to members of the 
@@ -82,11 +83,20 @@ $args = @(0,1,2,3,4,5,6)
 
 $newargs = StringSlice -array $args -slice $slice
 write-Host $newargs #writes 2 3 4 5
+
+$slice = "[2..#len#]"
+$args = @(0,1,2,3,4,5,6)
+
 #>
 	$array = $array | % { "`"$_`"" }
 	$new = $array -join ","
 	$new = "@($new)"
 	Write-Host "$new$slice"
+	if ($slice -match "#len#"){
+		$length = $array.length
+		$slice = $slice -replace  "#len#", "$length"
+		Write-Host "Modified slice, $slice"
+}
 	$newargs = invoke-expression "$new$slice"
 	return $newargs
 }
