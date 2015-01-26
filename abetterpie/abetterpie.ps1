@@ -96,7 +96,7 @@ $args = @(0,1,2,3,4,5,6)
 		$length = $array.length
 		$slice = $slice -replace  "#len#", "$length"
 		Write-Host "Modified slice, $slice"
-}
+	}
 	$newargs = invoke-expression "$new$slice"
 	return $newargs
 }
@@ -191,6 +191,7 @@ $args = @(0,1,2,3,4,5,6)
 		catch
 		{ Throw }
 	}
+## End of the functions from Mathieu
 
 function Piconfig-Path {
 	$piconfigpath = ValidatePIConfigCLU
@@ -229,7 +230,6 @@ $vars = $args[1 .. ($args.count -1)]
 $program = Get-Content $file
 
 function getBracketContent ($line) {
-
 	$r = [regex] "\[([^\[]*)\]"
 	$match = $r.match($line)
 	$text = $match.groups[1].value	
@@ -237,20 +237,22 @@ function getBracketContent ($line) {
 	return $text
 }
 
+gitgit
+
 if ($program -match "%i") {
 	# replace the single line which has an %i
 	$line = $program | Where-Object {$_ -match "%i"}
 
-Write-Host "line: $line"
+	Write-Host "line: $line"
 
-## To-DO check if brakcets are actually in the line
+	## To-DO check if brakcets are actually in the line
 	$Bracket = getBracketContent($line)
 
 	Write-Host $Bracket
 	Write-Host "Vars: $vars" 
 	$newvars = StringSlice -array $vars -slice $Bracket
 
-Write-Host "Newvars; $newvars"
+	Write-Host "Newvars; $newvars"
 	# Delete the brackets
 	$lineWOBracket = $line -replace "\[([^\[]*)\]"
 	Write-Host "line, without braket $lineWOBracket"
@@ -259,7 +261,7 @@ Write-Host "Newvars; $newvars"
 		$lineWOBracket.replace("%i", $_)
 	}
 
-Write-Host "New lines: $newlines"
+	Write-Host "New lines: $newlines"
 	$new = $newlines -join "`r`n"
 	Write-Host "New lines in the program, $new"
 	$program = $program.replace($line, $new)

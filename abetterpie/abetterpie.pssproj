@@ -29,6 +29,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="randomdata.ps1" />
+    <Content Include="Script1.ps1" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="abetterpie.ps1" />
