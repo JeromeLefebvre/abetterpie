@@ -1,3 +1,6 @@
+
+With the release of the powershell tools for the PI System, this code is obsolete.
+
 ## About abetterpie
 
 When I started learning about the PI system, I was using piconfig daily, but I often found a few things lacking about it. One of those things is the lack of variables. I've been thinking of an answer to this problem.
